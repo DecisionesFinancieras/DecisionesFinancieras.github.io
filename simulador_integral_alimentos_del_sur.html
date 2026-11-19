@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<title>Alimentos del Sur S.A. | Simulador de decisiones</title>
+<style>
+:root{--bg:#0b1020;--panel:#131d31;--panel2:#192640;--line:rgba(255,255,255,.1);--text:#edf3ff;--muted:#9baac4;--blue:#78aaff;--cyan:#5ce1d3;--purple:#bea5ff;--green:#6ee7a8;--red:#ff8c9b;--gold:#f4ca79}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 10% 0%,rgba(83,125,255,.16),transparent 38%),radial-gradient(ellipse at 95% 8%,rgba(92,225,211,.09),transparent 32%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:28px 16px 52px}
+.wrap{width:min(1160px,100%);margin:auto}
+header{margin-bottom:24px}
+.eyebrow{font-size:.73rem;letter-spacing:.15em;text-transform:uppercase;font-weight:800;color:var(--cyan);margin-bottom:10px}
+h1{font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.045em;line-height:1.08;margin:0}
+.lead{color:var(--muted);line-height:1.65;max-width:780px;margin:12px 0 0}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.company{color:#b9c7df;font-size:.82rem;border:1px solid var(--line);padding:7px 11px;border-radius:99px;background:rgba(255,255,255,.035)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:25px 0 18px;padding:6px;border:1px solid var(--line);border-radius:15px;background:rgba(16,25,43,.85)}
+.tab{border:0;border-radius:10px;background:transparent;color:var(--muted);font:inherit;font-size:.9rem;font-weight:750;padding:12px 17px;cursor:pointer;flex:1;min-width:130px;transition:.18s}
+.tab:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.tab.active{background:linear-gradient(110deg,rgba(92,225,211,.19),rgba(120,170,255,.2));color:var(--text);box-shadow:inset 0 0 0 1px rgba(120,170,255,.18)}
+.tabpanel{display:none}.tabpanel.active{display:block}
+.panel,.card,.recommend,.explain{background:linear-gradient(145deg,rgba(25,38,64,.97),rgba(17,27,47,.97));border:1px solid var(--line);border-radius:19px;box-shadow:0 16px 42px rgba(0,0,0,.2)}
+.panel{padding:21px;margin-bottom:17px}
+.section-title{font-size:1.05rem;font-weight:800;margin:0 0 5px}
+.section-sub{font-size:.84rem;color:var(--muted);margin:0 0 18px;line-height:1.5}
+.two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.input-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 18px}
+.field{min-width:0}
+.field label{display:flex;justify-content:space-between;gap:8px;font-size:.82rem;font-weight:650;margin-bottom:8px}
+.field label small{font-size:.73rem;color:var(--muted);font-weight:500}
+.control{display:flex;align-items:center;gap:10px}
+input[type=number]{width:116px;min-width:92px;background:#0b1425;border:1px solid rgba(255,255,255,.14);border-radius:10px;color:var(--text);padding:10px 11px;font:inherit;font-size:.88rem;outline:none}
+input[type=number]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(120,170,255,.13)}
+input[type=range]{width:100%;accent-color:#5e94f5;cursor:pointer;min-width:50px}
+.hint{font-size:.7rem;color:#8190aa;line-height:1.4;margin-top:6px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{padding:20px;min-width:0}
+.card.a{border-top:3px solid var(--blue)}.card.b{border-top:3px solid var(--purple)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.card h3{font-size:1rem;margin:0}
+.pill{font-size:.68rem;color:var(--muted);border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:99px;padding:5px 8px;white-space:nowrap}
+.hero-metric{background:rgba(255,255,255,.045);padding:13px 14px;border-radius:12px;margin-bottom:15px}
+.hero-metric span{display:block;color:var(--muted);font-size:.74rem;margin-bottom:5px}
+.hero-metric strong{font-size:clamp(1.35rem,3vw,1.8rem);letter-spacing:-.035em;overflow-wrap:anywhere}
+.metric-list{display:grid;gap:10px}
+.metric{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-size:.81rem}
+.metric span{color:var(--muted)}.metric strong{text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.metric-total{border-top:1px solid var(--line);padding-top:12px;margin-top:3px}
+.good{color:var(--green)}.bad{color:var(--red)}.neutral{color:var(--gold)}
+.recommend{padding:19px 21px;margin-top:16px;border-color:rgba(92,225,211,.25)}
+.rec-label{font-size:.69rem;text-transform:uppercase;letter-spacing:.13em;font-weight:850;color:var(--cyan);margin-bottom:7px}
+.recommend h3{font-size:1.25rem;margin:0;letter-spacing:-.025em}
+.recommend p{font-size:.85rem;color:#b6c4dc;line-height:1.6;margin:8px 0 0}
+.explain{padding:18px 20px;margin-top:16px}
+.explain h3{margin:0 0 9px;font-size:.95rem}
+.explain p,.explain li{color:var(--muted);font-size:.81rem;line-height:1.6}
+.explain ul{margin:7px 0 0;padding-left:19px}
+.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#d7e4ff;background:rgba(255,255,255,.05);border-radius:7px;padding:3px 6px;font-size:.75rem}
+.note{color:#8190aa;font-size:.73rem;line-height:1.55;margin:15px 2px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button.secondary{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:var(--muted);padding:9px 12px;font:inherit;font-size:.78rem;cursor:pointer}
+button.secondary:hover{color:var(--text);background:rgba(255,255,255,.08)}
+.alert{font-size:.8rem;color:var(--red);min-height:18px;margin-top:8px}
+.footer{text-align:center;color:#73819b;font-size:.72rem;margin-top:25px}
+@media(max-width:760px){.two-col,.cards{grid-template-columns:1fr}.input-grid{grid-template-columns:1fr}.panel{padding:17px}.card{padding:18px}}
+@media(max-width:430px){body{padding:21px 11px 40px}.tab{min-width:0;padding:11px 8px;font-size:.8rem}.control input[type=number]{width:100px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+ <div class="topline"><div class="eyebrow">Administración estratégica · Simulador empresarial</div><div class="company">ALIMENTOS DEL SUR S.A.</div></div>
+ <h1>Simulador de toma de decisiones</h1>
+ <p class="lead">Compará alternativas de Marketing, Finanzas y Recursos Humanos. Modificá los datos de entrada y observá cómo cambian los indicadores para fundamentar una decisión directiva.</p>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Áreas del simulador">
+ <button class="tab active" role="tab" aria-selected="true" aria-controls="marketing" data-tab="marketing">📣 Marketing</button>
+ <button class="tab" role="tab" aria-selected="false" aria-controls="finanzas" data-tab="finanzas">📊 Finanzas</button>
+ <button class="tab" role="tab" aria-selected="false" aria-controls="rrhh" data-tab="rrhh">👥 Recursos Humanos</button>
+</nav>
+
+<!-- MARKETING -->
+<section id="marketing" class="tabpanel active" role="tabpanel">
+ <div class="panel">
+  <h2 class="section-title">Caso 1 · Lanzamiento de bebidas saludables</h2>
+  <p class="section-sub">La empresa debe elegir cómo promocionar su línea de bebidas saludables. Los valores iniciales corresponden al archivo Excel.</p>
+  <div class="two-col">
+   <div>
+    <h3 class="section-title">Opción A · Influencers en redes</h3>
+    <p class="section-sub">Publicidad digital para ampliar el alcance y dar a conocer el producto.</p>
+    <div class="input-grid">
+     <div class="field"><label for="m_budgetA">Presupuesto <small>$</small></label><div class="control"><input id="m_budgetA" type="range" min="1000" max="500000" step="1000" value="50000"><input id="m_budgetA_n" type="number" min="1" value="50000"></div></div>
+     <div class="field"><label for="m_price">Precio unitario <small>$</small></label><div class="control"><input id="m_price" type="range" min="1" max="10000" step="10" value="800"><input id="m_price_n" type="number" min="0" value="800"></div></div>
+     <div class="field"><label for="m_stores">Puntos de venta <small>locales</small></label><div class="control"><input id="m_stores" type="range" min="0" max="200" step="1" value="5"><input id="m_stores_n" type="number" min="0" step="1" value="5"></div></div>
+     <div class="field"><label for="m_reach">Alcance por peso <small>personas/$</small></label><div class="control"><input id="m_reach" type="range" min="1" max="100" step="1" value="20"><input id="m_reach_n" type="number" min="0" value="20"></div></div>
+    </div>
+   </div>
+   <div>
+    <h3 class="section-title">Opción B · Degustaciones presenciales</h3>
+    <p class="section-sub">Eventos en puntos de venta para que los consumidores prueben el producto.</p>
+    <div class="input-grid">
+     <div class="field"><label for="m_budgetB">Presupuesto <small>$</small></label><div class="control"><input id="m_budgetB" type="range" min="1000" max="500000" step="1000" value="50000"><input id="m_budgetB_n" type="number" min="1" value="50000"></div></div>
+     <div class="field"><label for="m_eventCost">Costo por evento <small>$</small></label><div class="control"><input id="m_eventCost" type="range" min="1000" max="50000" step="500" value="8000"><input id="m_eventCost_n" type="number" min="1" value="8000"></div></div>
+     <div class="field"><label for="m_people">Personas por evento <small>personas</small></label><div class="control"><input id="m_people" type="range" min="1" max="1000" step="5" value="150"><input id="m_people_n" type="number" min="0" step="1" value="150"></div></div>
+     <div class="field"><label for="m_conversion">Tasa prueba → compra <small>%</small></label><div class="control"><input id="m_conversion" type="range" min="0" max="100" step="1" value="20"><input id="m_conversion_n" type="number" min="0" max="100" value="20"></div></div>
+    </div>
+   </div>
+  </div>
+  <div class="actions"><button class="secondary" onclick="resetMarketing()">Restablecer datos del Excel</button></div>
+  <div class="alert" id="m_error"></div>
+ </div>
+ <div class="cards">
+  <article class="card a"><div class="card-head"><h3>Opción A · Influencers</h3><span class="pill">Digital</span></div><div class="hero-metric"><span>Ingresos proyectados</span><strong id="m_a_revenue">—</strong></div><div class="metric-list">
+   <div class="metric"><span>Alcance estimado</span><strong id="m_a_reach">—</strong></div><div class="metric"><span>Tasa de conversión</span><strong id="m_a_rate">—</strong></div><div class="metric"><span>Ventas proyectadas</span><strong id="m_a_sales">—</strong></div><div class="metric metric-total"><span>ROI estimado</span><strong id="m_a_roi">—</strong></div>
+  </div></article>
+  <article class="card b"><div class="card-head"><h3>Opción B · Degustaciones</h3><span class="pill">Presencial</span></div><div class="hero-metric"><span>Ingresos proyectados</span><strong id="m_b_revenue">—</strong></div><div class="metric-list">
+   <div class="metric"><span>Eventos posibles</span><strong id="m_b_events">—</strong></div><div class="metric"><span>Personas alcanzadas</span><strong id="m_b_reach">—</strong></div><div class="metric"><span>Ventas estimadas</span><strong id="m_b_sales">—</strong></div><div class="metric metric-total"><span>ROI estimado</span><strong id="m_b_roi">—</strong></div>
+  </div></article>
+ </div>
+ <div class="recommend"><div class="rec-label">Diagnóstico de marketing</div><h3 id="m_winner">—</h3><p id="m_reason">—</p></div>
+ <div class="explain"><h3>¿Cómo se calculan los indicadores?</h3><ul>
+  <li>Alcance A = presupuesto × alcance por peso.</li><li>Conversión A = mínimo entre 1,5% × raíz cuadrada (puntos de venta ÷ 5) y 5%.</li><li>Ventas A = alcance × conversión; ingresos = ventas × precio.</li><li>Eventos B = parte entera de presupuesto ÷ costo por evento.</li><li>Personas B = eventos × personas por evento; ventas B = personas × tasa de prueba-compra.</li><li>ROI = (ingresos − presupuesto) ÷ presupuesto.</li>
+ </ul><p class="note">El simulador compara ingresos proyectados, como criterio automático de recomendación. El ROI es un indicador simplificado: no descuenta costos de producción ni otros gastos.</p></div>
+</section>
+
+<!-- FINANZAS -->
+<section id="finanzas" class="tabpanel" role="tabpanel">
+ <div class="panel">
+  <h2 class="section-title">Caso 2 · Gestión de riesgo e inversión</h2>
+  <p class="section-sub">La empresa dispone de capital operativo excedente y debe decidir entre una inversión volátil y una cartera diversificada.</p>
+  <div class="two-col">
+   <div><h3 class="section-title">Opción A · Startup volátil</h3><p class="section-sub">Invertir todo el capital en una startup tecnológica, con posibilidad de ganancia o pérdida.</p>
+    <div class="input-grid">
+     <div class="field"><label for="f_capA">Capital a invertir <small>$</small></label><div class="control"><input id="f_capA" type="range" min="100" max="100000" step="100" value="10000"><input id="f_capA_n" type="number" min="1" value="10000"></div></div>
+     <div class="field"><label for="f_success">Probabilidad de éxito <small>%</small></label><div class="control"><input id="f_success" type="range" min="0" max="100" value="35"><input id="f_success_n" type="number" min="0" max="100" value="35"></div></div>
+     <div class="field"><label for="f_gain">Ganancia si hay éxito <small>%</small></label><div class="control"><input id="f_gain" type="range" min="0" max="200" value="40"><input id="f_gain_n" type="number" min="0" value="40"></div></div>
+     <div class="field"><label for="f_loss">Pérdida si hay fracaso <small>%</small></label><div class="control"><input id="f_loss" type="range" min="0" max="100" value="50"><input id="f_loss_n" type="number" min="0" max="100" value="50"></div></div>
+    </div>
+   </div>
+   <div><h3 class="section-title">Opción B · Cartera diversificada</h3><p class="section-sub">Distribuir el capital entre un fondo indexado y bonos corporativos.</p>
+    <div class="input-grid">
+     <div class="field"><label for="f_capB">Capital a invertir <small>$</small></label><div class="control"><input id="f_capB" type="range" min="100" max="100000" step="100" value="10000"><input id="f_capB_n" type="number" min="1" value="10000"></div></div>
+     <div class="field"><label for="f_fund">Porcentaje en fondo <small>%</small></label><div class="control"><input id="f_fund" type="range" min="0" max="100" value="70"><input id="f_fund_n" type="number" min="0" max="100" value="70"></div></div>
+     <div class="field"><label for="f_bonds">Porcentaje en bonos <small>%</small></label><div class="control"><input id="f_bonds" type="range" min="0" max="100" value="30"><input id="f_bonds_n" type="number" min="0" max="100" value="30"></div></div>
+     <div class="field"><label for="f_fundRate">Rendimiento anual del fondo <small>%</small></label><div class="control"><input id="f_fundRate" type="range" min="-50" max="50" step=".5" value="7"><input id="f_fundRate_n" type="number" min="-100" max="100" step=".1" value="7"></div></div>
+     <div class="field"><label for="f_bondRate">Rendimiento anual de bonos <small>%</small></label><div class="control"><input id="f_bondRate" type="range" min="-50" max="50" step=".5" value="4"><input id="f_bondRate_n" type="number" min="-100" max="100" step=".1" value="4"></div></div>
+    </div>
+    <div class="hint">Los porcentajes destinados al fondo y a los bonos deben sumar 100%.</div>
+   </div>
+  </div>
+  <div class="actions"><button class="secondary" onclick="resetFinance()">Restablecer datos del Excel</button></div><div class="alert" id="f_error"></div>
+ </div>
+ <div class="cards">
+  <article class="card a"><div class="card-head"><h3>Opción A · Startup</h3><span class="pill">Mayor riesgo</span></div><div class="hero-metric"><span>Valor esperado del capital</span><strong id="f_a_expected">—</strong></div><div class="metric-list"><div class="metric"><span>Capital si hay éxito</span><strong id="f_a_success">—</strong></div><div class="metric"><span>Capital si hay fracaso</span><strong id="f_a_failure">—</strong></div><div class="metric"><span>Probabilidad de fracaso</span><strong id="f_a_failureProb">—</strong></div><div class="metric metric-total"><span>Ganancia / pérdida esperada</span><strong id="f_a_delta">—</strong></div></div></article>
+  <article class="card b"><div class="card-head"><h3>Opción B · Cartera diversificada</h3><span class="pill">Diversificada</span></div><div class="hero-metric"><span>Capital al año 3</span><strong id="f_b_year3">—</strong></div><div class="metric-list"><div class="metric"><span>Rendimiento ponderado anual</span><strong id="f_b_rate">—</strong></div><div class="metric"><span>Capital al año 1</span><strong id="f_b_year1">—</strong></div><div class="metric"><span>Ganancia acumulada al año 3</span><strong id="f_b_gain">—</strong></div><div class="metric metric-total"><span>Distribución de cartera</span><strong id="f_b_mix">—</strong></div></div></article>
+ </div>
+ <div class="recommend"><div class="rec-label">Diagnóstico financiero</div><h3 id="f_winner">—</h3><p id="f_reason">—</p></div>
+ <div class="explain"><h3>¿Cómo se calculan los indicadores?</h3><ul>
+  <li>Capital en éxito = capital × (1 + ganancia).</li><li>Capital en fracaso = capital × (1 − pérdida).</li><li>Valor esperado = (capital éxito × probabilidad éxito) + (capital fracaso × probabilidad fracaso).</li><li>Rendimiento ponderado = (% fondo × rendimiento fondo) + (% bonos × rendimiento bonos).</li><li>Capital año 1 = capital × (1 + rendimiento ponderado).</li><li>Capital año 3 = capital × (1 + rendimiento ponderado)³ (interés compuesto).</li>
+ </ul><p class="note">La comparación enfrenta el valor esperado de la alternativa A con el capital proyectado a tres años de B. Son horizontes distintos; interpretá el resultado junto con el riesgo, no como una comparación perfectamente equivalente.</p></div>
+</section>
+
+<!-- RRHH -->
+<section id="rrhh" class="tabpanel" role="tabpanel">
+ <div class="panel">
+  <h2 class="section-title">Caso 3 · Retención de talento</h2>
+  <p class="section-sub">El equipo clave sufre agotamiento y alta rotación. La empresa compara un bono económico inmediato con una mejora estructural de las condiciones laborales.</p>
+  <div class="panel" style="background:rgba(255,255,255,.025);box-shadow:none;margin:0 0 16px">
+   <h3 class="section-title">Datos comunes del equipo</h3>
+   <div class="input-grid">
+    <div class="field"><label for="r_employees">Empleados clave <small>personas</small></label><div class="control"><input id="r_employees" type="range" min="1" max="100" value="8"><input id="r_employees_n" type="number" min="1" step="1" value="8"></div></div>
+    <div class="field"><label for="r_salary">Salario mensual promedio <small>$</small></label><div class="control"><input id="r_salary" type="range" min="10000" max="1000000" step="5000" value="150000"><input id="r_salary_n" type="number" min="0" value="150000"></div></div>
+   </div>
+  </div>
+  <div class="two-col">
+   <div><h3 class="section-title">Opción A · Bono económico</h3><p class="section-sub">Un incentivo monetario inmediato para intentar retener al equipo.</p>
+    <div class="input-grid">
+     <div class="field"><label for="r_bonus">Porcentaje del bono <small>%</small></label><div class="control"><input id="r_bonus" type="range" min="0" max="100" value="15"><input id="r_bonus_n" type="number" min="0" max="100" value="15"></div></div>
+     <div class="field"><label for="r_turnover">Rotación post-bono estimada <small>% a 6 meses</small></label><div class="control"><input id="r_turnover" type="range" min="0" max="100" value="30"><input id="r_turnover_n" type="number" min="0" max="100" value="30"></div></div>
+    </div>
+   </div>
+   <div><h3 class="section-title">Opción B · Jornada híbrida</h3><p class="section-sub">Flexibilidad horaria y mejores condiciones para atacar las causas del agotamiento.</p>
+    <div class="input-grid">
+     <div class="field"><label for="r_impl">Costo de implementación <small>$</small></label><div class="control"><input id="r_impl" type="range" min="0" max="1000000" step="5000" value="80000"><input id="r_impl_n" type="number" min="0" value="80000"></div></div>
+     <div class="field"><label for="r_reduction">Reducción esperada de rotación <small>%</small></label><div class="control"><input id="r_reduction" type="range" min="0" max="100" value="55"><input id="r_reduction_n" type="number" min="0" max="100" value="55"></div></div>
+     <div class="field"><label for="r_replace">Costo de reemplazar 1 empleado <small>$</small></label><div class="control"><input id="r_replace" type="range" min="10000" max="2000000" step="10000" value="300000"><input id="r_replace_n" type="number" min="0" value="300000"></div></div>
+    </div>
+   </div>
+  </div>
+  <div class="actions"><button class="secondary" onclick="resetHR()">Restablecer datos del Excel</button></div><div class="alert" id="r_error"></div>
+ </div>
+ <div class="cards">
+  <article class="card a"><div class="card-head"><h3>Opción A · Bono económico</h3><span class="pill">Parche inmediato</span></div><div class="hero-metric"><span>Costo real total</span><strong id="r_a_total">—</strong></div><div class="metric-list"><div class="metric"><span>Costo total del bono</span><strong id="r_a_bonusCost">—</strong></div><div class="metric"><span>Empleados que se van igual</span><strong id="r_a_leavers">—</strong></div><div class="metric"><span>Costo de reemplazarlos</span><strong id="r_a_replaceCost">—</strong></div></div></article>
+  <article class="card b"><div class="card-head"><h3>Opción B · Jornada híbrida</h3><span class="pill">Mejora estructural</span></div><div class="hero-metric"><span>ROI de la inversión</span><strong id="r_b_roi">—</strong></div><div class="metric-list"><div class="metric"><span>Empleados retenidos estimados</span><strong id="r_b_retained">—</strong></div><div class="metric"><span>Ahorro en reemplazos evitados</span><strong id="r_b_saving">—</strong></div><div class="metric"><span>Costo neto (implementación − ahorro)</span><strong id="r_b_net">—</strong></div><div class="metric metric-total"><span>Costo de implementación</span><strong id="r_b_impl">—</strong></div></div></article>
+ </div>
+ <div class="recommend"><div class="rec-label">Diagnóstico de recursos humanos</div><h3 id="r_winner">—</h3><p id="r_reason">—</p></div>
+ <div class="explain"><h3>¿Cómo se calculan los indicadores?</h3><ul>
+  <li>Costo del bono A = empleados × salario mensual × porcentaje de bono.</li><li>Empleados que se van A = redondear hacia arriba (empleados × rotación post-bono).</li><li>Costo de reemplazos A = empleados que se van × costo de reemplazo.</li><li>Costo real total A = costo del bono + costo de reemplazos.</li><li>Empleados retenidos B = redondear (empleados × reducción de rotación).</li><li>Ahorro B = empleados retenidos × costo de reemplazo × 40% (estimación conservadora definida en el Excel).</li><li>ROI B = (ahorro − costo de implementación) ÷ costo de implementación.</li>
+ </ul><p class="note">El factor del 40% se conserva porque está explicado expresamente en la hoja RRHH del Excel. El ROI se expresa como porcentaje.</p></div>
+</section>
+<div class="footer">Simulador académico · Alimentos del Sur S.A. · Administración Estratégica</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>new Intl.NumberFormat('es-AR',{maximumFractionDigits:2}).format(n);
+const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:2}).format(n);
+const pct=n=>fmt(n*100)+'%';
+function bindPair(id){
+ const r=$(id), n=$(id+'_n'); if(!r||!n)return;
+ r.addEventListener('input',()=>{n.value=r.value;calculateAll()});
+ n.addEventListener('input',()=>{if(n.value!==''&&Number.isFinite(Number(n.value))){r.value=n.value;calculateAll()}});
+}
+['m_budgetA','m_price','m_stores','m_reach','m_budgetB','m_eventCost','m_people','m_conversion',
+'f_capA','f_success','f_gain','f_loss','f_capB','f_fund','f_bonds','f_fundRate','f_bondRate',
+'r_employees','r_salary','r_bonus','r_turnover','r_impl','r_reduction','r_replace'].forEach(bindPair);
+function val(id){return Number($(id+'_n').value)}
+function show(id,text,cls){const el=$(id);el.textContent=text;el.classList.remove('good','bad','neutral');if(cls)el.classList.add(cls)}
+function roiClass(x){return x>=0?'good':'bad'}
+function calculateMarketing(){
+ const ba=val('m_budgetA'),price=val('m_price'),stores=val('m_stores'),reachPer=val('m_reach');
+ const bb=val('m_budgetB'),eventCost=val('m_eventCost'),people=val('m_people'),conv=val('m_conversion')/100;
+ if(ba<=0||bb<=0||eventCost<=0||[ba,price,stores,reachPer,bb,eventCost,people,conv].some(x=>!Number.isFinite(x))){$('m_error').textContent='Revisá los datos: los presupuestos y el costo por evento deben ser mayores que cero.';return}
+ $('m_error').textContent='';
+ const aReach=ba*reachPer,aRate=Math.min(.015*Math.sqrt(stores/5),.05),aSales=aReach*aRate,aRev=aSales*price,aROI=(aRev-ba)/ba;
+ const events=Math.floor(bb/eventCost),bReach=events*people,bSales=bReach*conv,bRev=bSales*price,bROI=(bRev-bb)/bb;
+ show('m_a_revenue',money(aRev));show('m_a_reach',fmt(aReach)+' personas');show('m_a_rate',pct(aRate));show('m_a_sales',fmt(aSales)+' unidades');show('m_a_roi',pct(aROI),roiClass(aROI));
+ show('m_b_revenue',money(bRev));show('m_b_events',fmt(events));show('m_b_reach',fmt(bReach)+' personas');show('m_b_sales',fmt(bSales)+' unidades');show('m_b_roi',pct(bROI),roiClass(bROI));
+ if(bRev>aRev){$('m_winner').textContent='Conviene la Opción B · Degustaciones';$('m_reason').textContent=`Con los datos ingresados, las degustaciones proyectan ${money(bRev-aRev)} más de ingresos que los influencers. Permiten contacto directo y prueba del producto. La recomendación se basa en ingresos proyectados, no en alcance ni en ROI.`}
+ else{$('m_winner').textContent='Conviene la Opción A · Influencers';$('m_reason').textContent=`La campaña con influencers proyecta ${money(aRev-bRev)} más de ingresos que las degustaciones. Según las fórmulas del Excel, el mayor alcance y la conversión estimada producen más ventas e ingresos.`}
+}
+function calculateFinance(){
+ const capA=val('f_capA'),p=val('f_success')/100,g=val('f_gain')/100,l=val('f_loss')/100,capB=val('f_capB'),fund=val('f_fund')/100,bonds=val('f_bonds')/100,fr=val('f_fundRate')/100,br=val('f_bondRate')/100;
+ if(capA<=0||capB<=0||[p,g,l,fund,bonds,fr,br].some(x=>!Number.isFinite(x))){$('f_error').textContent='Ingresá capitales mayores que cero y porcentajes válidos.';return}
+ if(Math.abs(fund+bonds-1)>.000001){$('f_error').textContent='La distribución de la cartera debe sumar exactamente 100% (fondo + bonos).';return}
+ $('f_error').textContent='';
+ const success=capA*(1+g),failure=capA*(1-l),expected=success*p+failure*(1-p),delta=expected-capA;
+ const weighted=fund*fr+bonds*br,year1=capB*(1+weighted),year3=capB*Math.pow(1+weighted,3),gain3=year3-capB;
+ show('f_a_expected',money(expected));show('f_a_success',money(success));show('f_a_failure',money(failure));show('f_a_failureProb',pct(1-p));show('f_a_delta',(delta>=0?'+':'')+money(delta),delta>=0?'good':'bad');
+ show('f_b_year3',money(year3));show('f_b_rate',pct(weighted));show('f_b_year1',money(year1));show('f_b_gain',money(gain3),gain3>=0?'good':'bad');show('f_b_mix',fmt(fund*100)+'% fondo / '+fmt(bonds*100)+'% bonos');
+ if(year3>expected){$('f_winner').textContent='La proyección favorece la Opción B · Cartera diversificada';$('f_reason').textContent=`La cartera proyecta ${money(year3)} al año 3, frente a un valor esperado de ${money(expected)} para la startup. La cartera distribuye el capital entre dos instrumentos y reduce la dependencia de un único resultado. Atención: se comparan horizontes distintos (valor esperado de A y proyección a tres años de B).`}
+ else{$('f_winner').textContent='La proyección numérica favorece la Opción A · Startup';$('f_reason').textContent=`El valor esperado de la startup (${money(expected)}) supera el capital proyectado de la cartera al año 3 (${money(year3)}). La Opción A mantiene mayor incertidumbre: existe una probabilidad de ${pct(1-p)} de fracaso y una pérdida estimada del ${pct(l)} sobre el capital.`}
+}
+function calculateHR(){
+ const emp=val('r_employees'),salary=val('r_salary'),bonus=val('r_bonus')/100,turn=val('r_turnover')/100,impl=val('r_impl'),reduction=val('r_reduction')/100,replace=val('r_replace');
+ if(emp<=0||[emp,salary,bonus,turn,impl,reduction,replace].some(x=>!Number.isFinite(x))){$('r_error').textContent='Revisá los datos ingresados.';return}
+ $('r_error').textContent='';
+ const bonusCost=emp*salary*bonus,leavers=Math.ceil(emp*turn),replaceCost=leavers*replace,totalA=bonusCost+replaceCost;
+ const retained=Math.round(emp*reduction),saving=retained*replace*.4,net=impl-saving,roi=impl===0?(saving>0?Infinity:0):(saving-impl)/impl;
+ show('r_a_total',money(totalA));show('r_a_bonusCost',money(bonusCost));show('r_a_leavers',leavers+' de '+emp+' empleados');show('r_a_replaceCost',money(replaceCost));
+ show('r_b_roi',impl===0?(saving>0?'∞': '0%'):pct(roi),roi>=0?'good':'bad');show('r_b_retained',retained+' de '+emp+' empleados');show('r_b_saving',money(saving));show('r_b_net',(net<0?'−':'')+money(Math.abs(net)),net<=0?'good':'bad');show('r_b_impl',money(impl));
+ const bEconomicCost=Math.max(0,net);
+ if(bEconomicCost<totalA){$('r_winner').textContent='Conviene la Opción B · Jornada híbrida';$('r_reason').textContent=`La Opción A tiene un costo real estimado de ${money(totalA)}. La Opción B cuesta ${money(impl)} de implementación y proyecta ${money(saving)} de ahorro en reemplazos evitados (costo neto: ${money(net)}). Además, busca actuar sobre las condiciones laborales que originan el agotamiento. El modelo usa el factor conservador del 40% indicado en el Excel.`}
+ else{$('r_winner').textContent='La comparación de costos favorece la Opción A';$('r_reason').textContent=`Con estos datos, el costo real estimado del bono (${money(totalA)}) es menor que el costo neto calculado para la jornada híbrida (${money(net)}). Además del costo, conviene considerar que la jornada híbrida apunta a las causas estructurales de la rotación.`}
+}
+function calculateAll(){calculateMarketing();calculateFinance();calculateHR()}
+function setDefaults(obj){for(const [id,v] of Object.entries(obj)){if($(id+'_n'))$(id+'_n').value=v;if($(id))$(id).value=v}calculateAll()}
+function resetMarketing(){setDefaults({m_budgetA:50000,m_price:800,m_stores:5,m_reach:20,m_budgetB:50000,m_eventCost:8000,m_people:150,m_conversion:20})}
+function resetFinance(){setDefaults({f_capA:10000,f_success:35,f_gain:40,f_loss:50,f_capB:10000,f_fund:70,f_bonds:30,f_fundRate:7,f_bondRate:4})}
+function resetHR(){setDefaults({r_employees:8,r_salary:150000,r_bonus:15,r_turnover:30,r_impl:80000,r_reduction:55,r_replace:300000})}
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-selected',b===btn?'true':'false')});document.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('active',p.id===btn.dataset.tab))}));
+calculateAll();
+</script>
+</body>
+</html>
